@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">FireNews</string>
+    <string name="app_name">Fire News</string>
+    <string name="login_title">Sign in with your preferred access method or continue as anonymous</string>
+    <string name="mail_login">Sign in with email</string>
+    <string name="anon_login">Continue as anonymous</string>
+    <string name="welcome_message">Welcome to</string>
+    <string name="welcome">welcome</string>
+    <string name="facebook_app_id">783112190049174</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">56789</string>
+    <string name="web_client_id">1074764944081-51p2it749v3b6smpisjnekvfd8369gti.apps.googleusercontent.com</string>
 </resources>

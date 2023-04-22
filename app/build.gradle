@@ -1,9 +1,19 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/home/dany/AndroidStudioProjects/FireNews/app/key.jks')
+            storePassword 'key123'
+            keyAlias 'key'
+            keyPassword 'key123'
+        }
+    }
     namespace 'com.example.firenews'
     compileSdk 33
 
@@ -19,8 +29,12 @@ android {
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            debuggable true
         }
     }
     compileOptions {
@@ -30,15 +44,42 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures{
+        dataBinding true
+    }
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    //Auth
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    //RTDB
+    implementation 'com.google.firebase:firebase-database-ktx'
+    //Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    //Analytics
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    //FCM
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    //Card view to display the items
+    implementation "androidx.cardview:cardview:1.0.0"
+    //Google sign in button
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    //Facebook sign in button
+    implementation 'com.facebook.android:facebook-login:latest.release'
+
+
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+
     testImplementation 'junit:junit:4.13.2'
+    //noinspection GradleDependency
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    //noinspection GradleDependency
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }

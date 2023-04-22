@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1074764944081",
+    "firebase_url": "https://firenews-92f91-default-rtdb.firebaseio.com",
+    "project_id": "firenews-92f91",
+    "storage_bucket": "firenews-92f91.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074764944081:android:748106352b1ebf3d8e2bf0",
+        "android_client_info": {
+          "package_name": "com.example.firenews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074764944081-rgrhlehck4n71b9s0d5l0sh2ansjv78c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.firenews",
+            "certificate_hash": "2a713ea10654be0345d9de5a0bca054445c4a0db"
+          }
+        },
+        {
+          "client_id": "1074764944081-3l40p713m9cvpv0p5n358n10kud03526.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX2ox8hSp64vGc7CxsWR7pAcVUmSdbQMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1074764944081-3l40p713m9cvpv0p5n358n10kud03526.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
