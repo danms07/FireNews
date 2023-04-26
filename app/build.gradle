@@ -48,6 +48,8 @@ android {
     buildFeatures{
         dataBinding true
     }
+
+
 }
 
 dependencies {
@@ -68,7 +70,8 @@ dependencies {
     //Google sign in button
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     //Facebook sign in button
-    implementation 'com.facebook.android:facebook-login:latest.release'
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
+    //implementation 'com.facebook.android:facebook-login:latest.release'
 
 
     implementation 'androidx.core:core-ktx:1.10.0'

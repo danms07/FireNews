@@ -7,6 +7,15 @@
     <string name="welcome">welcome</string>
     <string name="facebook_app_id">783112190049174</string>
     <string name="fb_login_protocol_scheme">fb1234</string>
-    <string name="facebook_client_token">56789</string>
+    <string name="facebook_client_token">6319f960909148218ec85adcc7724cc3</string>
     <string name="web_client_id">1074764944081-51p2it749v3b6smpisjnekvfd8369gti.apps.googleusercontent.com</string>
+    <string name="menu_logout">Logout</string>
+    <string name="set_email">Input your email to continue</string>
+    <string name="email_instructions">You will receive an email with a link to access Firenews</string>
+    <string name="email_hint">username@domain.com</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="empty_email">Please input an email address</string>
+    <string name="invalid_email">Please input a valid email address</string>
+    <string name="sending_email">Sending email</string>
 </resources>
