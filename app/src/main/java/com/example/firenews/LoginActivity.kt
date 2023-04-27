@@ -136,6 +136,14 @@ class LoginActivity : AppCompatActivity(), OnDialogInteractionListener {
                 val user = auth.currentUser
                 jumpToMain(user)
             }
+            else{
+                AlertDialog.Builder(this)
+                    .setMessage(task.exception?.toString())
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.ok){dialog, _ ->dialog.dismiss()}
+                    .create()
+                    .show()
+            }
         }
     }
 

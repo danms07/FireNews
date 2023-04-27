@@ -65,6 +65,9 @@ dependencies {
     //FCM
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
+    //Coil to download images
+    implementation "io.coil-kt:coil:2.3.0"
+
     //Card view to display the items
     implementation "androidx.cardview:cardview:1.0.0"
     //Google sign in button

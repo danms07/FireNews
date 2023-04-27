@@ -7,17 +7,49 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import com.example.firenews.adapter.NewsAdapter
+import com.example.firenews.databinding.MainBinding
+import com.example.firenews.viewmodel.MainViewModel
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var binding:MainBinding
+    lateinit var viewModel:MainViewModel
+    lateinit var recyclerAdapter:NewsAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!isSignedUser()){
             jumpToLogin()
         }
+        binding= MainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        viewModel= ViewModelProvider(this)[MainViewModel::class.java]
+        /*viewModel.news.observe(this){articles->
+            articles.forEach { article->
+                addRecord(article.title?:"empty")
+            }
+        }*/
+        recyclerAdapter=NewsAdapter(viewModel)
 
-        setContentView(R.layout.activity_main)
+        /*val database=Firebase.database
+        val sourceRef=database.getReference("/sources/")
+        sourceRef.addValueEventListener(this)*/
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.recyclerNews.adapter=recyclerAdapter
+        viewModel.news.observe(this){articles->
+            recyclerAdapter.items=articles
+            recyclerAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun isSignedUser():Boolean {
@@ -49,4 +81,9 @@ class MainActivity : AppCompatActivity() {
     private fun showToast(message:String){
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
     }
+
+    private fun addRecord(record:String){
+        binding.tvTest.append("$record \n")
+    }
+
 }

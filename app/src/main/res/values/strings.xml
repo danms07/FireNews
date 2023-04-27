@@ -18,4 +18,5 @@
     <string name="empty_email">Please input an email address</string>
     <string name="invalid_email">Please input a valid email address</string>
     <string name="sending_email">Sending email</string>
+    <string name="img_content_description">Article picture</string>
 </resources>
