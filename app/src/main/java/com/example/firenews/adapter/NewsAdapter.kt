@@ -11,7 +11,7 @@ import com.example.firenews.viewmodel.MainViewModel
 class NewsAdapter(private val viewModel:MainViewModel): RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
     var items:List<Article> = listOf()
 
-    class NewsViewHolder(private val binding:ArticleBinding): RecyclerView.ViewHolder(binding.root) {
+    class NewsViewHolder(private val binding: ArticleBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(article:Article,viewModel: MainViewModel){
             binding.article=article
             binding.mainVM=viewModel
@@ -31,5 +31,10 @@ class NewsAdapter(private val viewModel:MainViewModel): RecyclerView.Adapter<New
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         holder.bind(items[position],viewModel)
+    }
+
+    fun onDataChanged(articles:List<Article>){
+        this.items=articles
+        notifyDataSetChanged()
     }
 }

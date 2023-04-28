@@ -18,11 +18,11 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),Navigator {
 
     lateinit var binding:MainBinding
     lateinit var viewModel:MainViewModel
-    lateinit var recyclerAdapter:NewsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!isSignedUser()){
@@ -36,21 +36,16 @@ class MainActivity : AppCompatActivity() {
                 addRecord(article.title?:"empty")
             }
         }*/
-        recyclerAdapter=NewsAdapter(viewModel)
-
+        viewModel.navigator=this
+        binding.recyclerNews.adapter=viewModel.recyclerAdapter
+        viewModel.news.observe(this){articles->
+            viewModel.recyclerAdapter.onDataChanged(articles)
+        }
         /*val database=Firebase.database
         val sourceRef=database.getReference("/sources/")
         sourceRef.addValueEventListener(this)*/
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.recyclerNews.adapter=recyclerAdapter
-        viewModel.news.observe(this){articles->
-            recyclerAdapter.items=articles
-            recyclerAdapter.notifyDataSetChanged()
-        }
-    }
 
     private fun isSignedUser():Boolean {
         val auth= Firebase.auth
@@ -78,12 +73,16 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showToast(message:String){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+
+
+    override fun loadUrl(url: String) {
+        val intent=Intent(this,WebViewActivity::class.java)
+        intent.putExtra(WebViewActivity.URL,url)
+        startActivity(intent)
     }
 
-    private fun addRecord(record:String){
-        binding.tvTest.append("$record \n")
+    override fun displayMessage(message: String) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
     }
 
 }
