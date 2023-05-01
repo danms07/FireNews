@@ -28,6 +28,12 @@ class MainActivity : AppCompatActivity(),Navigator {
         if(!isSignedUser()){
             jumpToLogin()
         }
+        supportActionBar?.apply{
+            setDisplayUseLogoEnabled(true)
+            setIcon(R.drawable.ic_action_bar)
+            setDisplayShowHomeEnabled(true)
+            elevation=12.0f
+        }
         binding= MainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel= ViewModelProvider(this)[MainViewModel::class.java]
@@ -69,6 +75,9 @@ class MainActivity : AppCompatActivity(),Navigator {
             val auth= Firebase.auth
             auth.signOut()
             jumpToLogin()
+        }
+        else if(item.itemId==R.id.crash){
+            throw RuntimeException("Test Crash from menu")
         }
         return super.onOptionsItemSelected(item)
     }

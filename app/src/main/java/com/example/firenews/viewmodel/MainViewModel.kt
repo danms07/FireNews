@@ -1,5 +1,6 @@
 package com.example.firenews.viewmodel
 
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import com.example.firenews.Navigator
 import com.example.firenews.adapter.NewsAdapter
 import com.example.firenews.model.Article
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -15,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 
 class MainViewModel:ViewModel(), ValueEventListener {
     var navigator:Navigator?=null
+    private val firebaseAnalytics = Firebase.analytics
     private val _news=MutableLiveData<MutableList<Article>>().apply {
         value= mutableListOf()
     }
@@ -41,6 +45,7 @@ class MainViewModel:ViewModel(), ValueEventListener {
             }
 
         }
+        newsArticles.shuffle()
         _news.value?.addAll(newsArticles)
         _news.postValue(_news.value)
     }
@@ -50,7 +55,14 @@ class MainViewModel:ViewModel(), ValueEventListener {
     }
 
     fun onItemClick(article:Article){
-        Log.e("OnItemClick",article.title?:"")
+        val bundle=Bundle().apply {
+            putString("title",article.title)
+            putString("id",article.id)
+            putString("source", article.source)
+        }
+
+        firebaseAnalytics.logEvent("article_click",bundle)
+        //Log.e("OnItemClick",article.title?:"")
         val url=article.url
         if(url!=null) navigator?.loadUrl(url)
     }

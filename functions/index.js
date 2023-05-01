@@ -42,8 +42,11 @@ const getNews= (query)=>{
 const writeNewsInDB=(source, articles)=>{
     const ref=admin.database().ref('/sources/'+source+'/');
     articles.forEach(article=>{
-        delete article.source;
-        ref.push().set(article);
+        //delete article.source;
+        article.source=article.source.name
+        const reference=ref.push()
+        article.id=reference.key
+        reference.set(article);
     });
     
 }

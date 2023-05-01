@@ -1,22 +1,23 @@
 <resources>
-    <string name="app_name">Fire News</string>
+    <string name="app_name" translatable="false">Fire News</string>
     <string name="login_title">Sign in with your preferred access method or continue as anonymous</string>
-    <string name="mail_login">Sign in with email</string>
+    <string name="mail_login" translatable="false">Sign in with email</string>
     <string name="anon_login">Continue as anonymous</string>
     <string name="welcome_message">Welcome to</string>
     <string name="welcome">welcome</string>
-    <string name="facebook_app_id">783112190049174</string>
-    <string name="fb_login_protocol_scheme">fb1234</string>
-    <string name="facebook_client_token">6319f960909148218ec85adcc7724cc3</string>
-    <string name="web_client_id">1074764944081-51p2it749v3b6smpisjnekvfd8369gti.apps.googleusercontent.com</string>
+    <string name="facebook_app_id" translatable="false">783112190049174</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1234</string>
+    <string name="facebook_client_token" translatable="false">6319f960909148218ec85adcc7724cc3</string>
+    <string name="web_client_id" translatable="false">1074764944081-51p2it749v3b6smpisjnekvfd8369gti.apps.googleusercontent.com</string>
     <string name="menu_logout">Logout</string>
-    <string name="set_email">Input your email to continue</string>
-    <string name="email_instructions">You will receive an email with a link to access Firenews</string>
-    <string name="email_hint">username@domain.com</string>
-    <string name="ok">Ok</string>
+    <string name="set_email" translatable="false">Input your email to continue</string>
+    <string name="email_instructions" translatable="false">You will receive an email with a link to access Firenews</string>
+    <string name="email_hint" translatable="false">username@domain.com</string>
+    <string name="ok" translatable="false">Ok</string>
     <string name="cancel">Cancel</string>
-    <string name="empty_email">Please input an email address</string>
-    <string name="invalid_email">Please input a valid email address</string>
-    <string name="sending_email">Sending email</string>
+    <string name="empty_email" translatable="false">Please input an email address</string>
+    <string name="invalid_email" translatable="false">Please input a valid email address</string>
+    <string name="sending_email" translatable="false">Sending email</string>
     <string name="img_content_description">Article picture</string>
+    <string name="force_crash">Force crash</string>
 </resources>

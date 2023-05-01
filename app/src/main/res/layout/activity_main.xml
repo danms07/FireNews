@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
-        android:padding="10dp"
+
         >
         <TextView
             android:layout_width="match_parent"
@@ -20,6 +20,7 @@
             android:text="EMPTY"
             android:visibility="gone"/>
         <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/recyclerNews"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Ingresa con tu método de acceso favorito o continúa como anónimo</string>
+    <string name="anon_login">Modo anónimo</string>
+    <string name="welcome_message">Bienvenido a</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="menu_logout">Cerrar sesión</string>
+    <string name="cancel">Cancelar</string>
+    <string name="img_content_description">Imágen del artículo</string>
+    <string name="force_crash">Forzar crash</string>
+</resources>

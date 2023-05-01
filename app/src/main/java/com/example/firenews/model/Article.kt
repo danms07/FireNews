@@ -12,8 +12,9 @@ data class Article(
     var publishedAt:String?="",
     var title:String?="",
     var url:String?="",
-    var urlToImage:String?=""
-
+    var urlToImage:String?="",
+    var id:String?="",
+    var source:String?=""
 ) {
     val time:String
         get() {
@@ -36,7 +37,9 @@ data class Article(
             "publishedAt" to publishedAt,
             "title" to title,
             "url" to url,
-            "urlToImage" to urlToImage
+            "urlToImage" to urlToImage,
+            "id" to id,
+            "source" to source
         )
     }
 }
