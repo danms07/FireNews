@@ -47,8 +47,7 @@ const writeNewsInDB=(source, articles)=>{
         const reference=ref.push()
         article.id=reference.key
         reference.set(article);
-    });
-    
+    });   
 }
 
 

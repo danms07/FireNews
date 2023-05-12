@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.example.firenews.Navigator
 import com.example.firenews.adapter.NewsAdapter
 import com.example.firenews.model.Article
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -25,7 +24,7 @@ class MainViewModel:ViewModel(), ValueEventListener {
     val news:LiveData<MutableList<Article>>
     get() {return _news}
     //
-    lateinit var recyclerAdapter: NewsAdapter
+    var recyclerAdapter: NewsAdapter
     init{
         val database= Firebase.database
         val sourceRef=database.getReference("/sources/")
@@ -51,7 +50,7 @@ class MainViewModel:ViewModel(), ValueEventListener {
     }
 
     override fun onCancelled(error: DatabaseError) {
-        TODO("Not yet implemented")
+        Log.e("DB Error",error.toString())
     }
 
     fun onItemClick(article:Article){
@@ -60,9 +59,7 @@ class MainViewModel:ViewModel(), ValueEventListener {
             putString("id",article.id)
             putString("source", article.source)
         }
-
         firebaseAnalytics.logEvent("article_click",bundle)
-        //Log.e("OnItemClick",article.title?:"")
         val url=article.url
         if(url!=null) navigator?.loadUrl(url)
     }
