@@ -83,7 +83,7 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
 
     }
 
-    private fun phoneSignIn(phoneNumber:String="+525588043761"){
+    private fun phoneSignIn(phoneNumber:String="+525555555555"){
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
