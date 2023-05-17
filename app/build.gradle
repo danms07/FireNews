@@ -3,17 +3,18 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
-    signingConfigs {
+    /*signingConfigs {
         release {
             storeFile file('/home/dany/AndroidStudioProjects/FireNews/app/key.jks')
             storePassword 'key123'
             keyAlias 'key'
             keyPassword 'key123'
         }
-    }
+    }*/
     namespace 'com.example.firenews'
     compileSdk 33
 
@@ -29,7 +30,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -75,6 +76,9 @@ dependencies {
     //Facebook sign in button
     implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
     //implementation 'com.facebook.android:facebook-login:latest.release'
+
+    //Gradle license Plugin
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
 
 
     implementation 'androidx.core:core-ktx:1.10.0'

@@ -14,6 +14,7 @@
         android:theme="@style/Theme.FireNews"
         tools:targetApi="31"
         android:usesCleartextTraffic="true"
+
         >
         <activity
             android:name=".WebViewActivity"
@@ -31,19 +32,7 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="firenews-92f91.firebaseapp.com"
-                    android:scheme="https" />
-                <data
-                    android:host="firenews-92f91.firebaseapp.com"
-                    android:scheme="http" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
@@ -56,8 +45,7 @@
         </activity> <!-- Facebook login -->
         <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">

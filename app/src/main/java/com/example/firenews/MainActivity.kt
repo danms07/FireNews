@@ -8,20 +8,16 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.example.firenews.adapter.NewsAdapter
 import com.example.firenews.databinding.MainBinding
 import com.example.firenews.viewmodel.MainViewModel
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity(),Navigator {
 
-    lateinit var binding:MainBinding
-    lateinit var viewModel:MainViewModel
+    private lateinit var binding:MainBinding
+    private lateinit var viewModel:MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,13 +67,18 @@ class MainActivity : AppCompatActivity(),Navigator {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId==R.id.logout_menu){
-            val auth= Firebase.auth
-            auth.signOut()
-            jumpToLogin()
-        }
-        else if(item.itemId==R.id.crash){
-            throw RuntimeException("Test Crash from menu")
+        when (item.itemId) {
+            R.id.logout_menu -> {
+                val auth= Firebase.auth
+                auth.signOut()
+                jumpToLogin()
+            }
+            R.id.crash -> {
+                throw RuntimeException("Test Crash from menu")
+            }
+            R.id.license_item -> {
+                startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+            }
         }
         return super.onOptionsItemSelected(item)
     }

@@ -1,59 +1,96 @@
 package com.example.firenews
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.firenews.databinding.EmailDialogBinding
 import com.example.firenews.databinding.LoginBinding
+import com.example.firenews.databinding.VerificationCodeInputBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.facebook.login.LoginResult
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.ktx.actionCodeSettings
+import java.util.concurrent.TimeUnit
 
 
-class LoginActivity : AppCompatActivity(), OnDialogInteractionListener {
+class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCodeDialogInteractionListener {
     private lateinit var loginBinding: LoginBinding
     private lateinit var auth: FirebaseAuth
     private val callbackManager = CallbackManager.Factory.create()
     private val emailDialog: AlertDialog by lazy {
-        buildDialog()
+        buildEmailInputDialog()
     }
 
-    private fun buildDialog(): AlertDialog {
+    private fun buildEmailInputDialog(): AlertDialog {
         val emailBinding = EmailDialogBinding.inflate(layoutInflater)
         emailBinding.listener = this
         return AlertDialog.Builder(this).setView(emailBinding.root).setCancelable(true).create()
     }
 
+    private fun buildVerificationCodeInputDialog(verificationId:String):AlertDialog{
+        val codeBinding=VerificationCodeInputBinding.inflate(layoutInflater)
+        val dialog=AlertDialog.Builder(this)
+            .setView(codeBinding.root)
+            .setCancelable(false)
+            .create()
+        codeBinding.apply{
+            id=verificationId
+            listener=this@LoginActivity
+            dialogInterface=dialog
+        }
+        return dialog
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+
         loginBinding = LoginBinding.inflate(layoutInflater)
         setContentView(loginBinding.root)
         loginBinding.googleSignInButton.setOnClickListener { googleSignIn() }
         setupFbSignIn()
         loginBinding.anonLoginBtn.setOnClickListener { anonSignIn() }
+        loginBinding.phoneBtn.setOnClickListener { phoneSignIn() }
         //loginBinding.mailLoginBtn.setOnClickListener { mailSignIn() }
 
 
+    }
+
+    private fun phoneSignIn(phoneNumber:String="+525588043761"){
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber) // Phone number to verify
+            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+            .setActivity(this) // Activity (for callback binding)
+            .setCallbacks(callbacks) // OnVerificationStateChangedCallbacks
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
     override fun onResume() {
@@ -250,6 +287,80 @@ class LoginActivity : AppCompatActivity(), OnDialogInteractionListener {
             }
     }
 
+    private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+            // This callback will be invoked in two situations:
+            // 1 - Instant verification. In some cases the phone number can be instantly
+            //     verified without needing to send or enter a verification code.
+            // 2 - Auto-retrieval. On some devices Google Play services can automatically
+            //     detect the incoming verification SMS and perform verification without
+            //     user action.
+            Log.d(TAG, "onVerificationCompleted:$credential")
+            signInWithPhoneAuthCredential(credential)
+        }
+
+        override fun onVerificationFailed(e: FirebaseException) {
+            // This callback is invoked in an invalid request for verification is made,
+            // for instance if the the phone number format is not valid.
+            Log.w(TAG, "onVerificationFailed", e)
+            
+            val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+            val simOperatorName = telephonyManager.simOperatorName
+            Firebase.crashlytics.setCustomKey("Carrier",simOperatorName)
+            Firebase.crashlytics.recordException(e)
+            when (e) {
+                is FirebaseAuthInvalidCredentialsException -> {
+                    // Invalid request
+                }
+
+                is FirebaseTooManyRequestsException -> {
+                    // The SMS quota for the project has been exceeded
+                }
+
+                is FirebaseAuthMissingActivityForRecaptchaException -> {
+                    // reCAPTCHA verification attempted with null Activity
+                }
+            }
+
+            // Show a message and update the UI
+        }
+
+        override fun onCodeSent(
+            verificationId: String,
+            token: PhoneAuthProvider.ForceResendingToken,
+        ) {
+            // The SMS verification code has been sent to the provided phone number, we
+            // now need to ask the user to enter the code and then construct a credential
+            // by combining the code with a verification ID.
+            Log.d(TAG, "onCodeSent:$verificationId")
+            buildVerificationCodeInputDialog(verificationId).show()
+
+            // Save verification ID and resending token so we can use them later
+            //storedVerificationId = verificationId
+            //resendToken = token
+        }
+    }
+
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = task.result?.user
+                    jumpToMain(user)
+                } else {
+                    // Sign in failed, display a message and update the UI
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                    }
+                    // Update UI
+                }
+            }
+    }
+
     private fun validateEmail(email: String): Boolean {
         val pattern = Regex("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})\$")
         return pattern.matches(email)
@@ -269,5 +380,32 @@ class LoginActivity : AppCompatActivity(), OnDialogInteractionListener {
         const val EMAIL="EMAIL"
         const val PREFERENCES="login"
 
+    }
+
+    override fun onCodeInput(verificationId:String,verificationCode: String,dialogInterface:DialogInterface) {
+        val credential = PhoneAuthProvider.getCredential(verificationId, verificationCode)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    dialogInterface.dismiss()
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+
+                    val user = task.result?.user
+                    jumpToMain(user)
+                } else {
+                    // Sign in failed, display a message and update the UI
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                        Toast.makeText(this,R.string.invalid_verification_code,Toast.LENGTH_LONG).show()
+                    }
+                    // Update UI
+                }
+            }
+    }
+
+    override fun onPhoneVerificationCancelled() {
+        TODO("Not yet implemented")
     }
 }

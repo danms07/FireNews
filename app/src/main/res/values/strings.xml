@@ -20,4 +20,9 @@
     <string name="sending_email" translatable="false">Sending email</string>
     <string name="img_content_description">Article picture</string>
     <string name="force_crash">Force crash</string>
+    <string name="license_option">See licenses</string>
+    <string name="verification_code">Input the verification code sent to your phone</string>
+    <string name="verification_code_input">Verification code</string>
+    <string name="invalid_verification_code">The code is invalid, please rectify it and try again</string>
+    <string name="phone_login">Access with phone number</string>
 </resources>

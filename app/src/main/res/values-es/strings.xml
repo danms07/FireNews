@@ -8,4 +8,9 @@
     <string name="cancel">Cancelar</string>
     <string name="img_content_description">Imágen del artículo</string>
     <string name="force_crash">Forzar crash</string>
+    <string name="license_option">Ver licencias</string>
+    <string name="verification_code">Ingresa el código enviado a tu teléfono</string>
+    <string name="verification_code_input">Código de verificación</string>
+    <string name="invalid_verification_code">El código en inválido, por favor revísalo e intentalo de nuevo</string>
+    <string name="phone_login">Ingresa con tu número de teléfono</string>
 </resources>

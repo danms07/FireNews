@@ -1,6 +1,6 @@
 package com.example.firenews
 
-interface OnDialogInteractionListener {
+interface OnMailDialogInteractionListener {
     fun onEmail(email:String)
     fun onCancel()
 }
