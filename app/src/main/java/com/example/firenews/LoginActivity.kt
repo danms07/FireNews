@@ -1,8 +1,10 @@
 package com.example.firenews
 
+
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.util.Log
@@ -20,9 +22,13 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -36,11 +42,14 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
 
-class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCodeDialogInteractionListener {
+class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener,
+    OnCodeDialogInteractionListener {
     private lateinit var loginBinding: LoginBinding
     private lateinit var auth: FirebaseAuth
     private val callbackManager = CallbackManager.Factory.create()
@@ -54,16 +63,16 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
         return AlertDialog.Builder(this).setView(emailBinding.root).setCancelable(true).create()
     }
 
-    private fun buildVerificationCodeInputDialog(verificationId:String):AlertDialog{
-        val codeBinding=VerificationCodeInputBinding.inflate(layoutInflater)
-        val dialog=AlertDialog.Builder(this)
+    private fun buildVerificationCodeInputDialog(verificationId: String): AlertDialog {
+        val codeBinding = VerificationCodeInputBinding.inflate(layoutInflater)
+        val dialog = AlertDialog.Builder(this)
             .setView(codeBinding.root)
             .setCancelable(false)
             .create()
-        codeBinding.apply{
-            id=verificationId
-            listener=this@LoginActivity
-            dialogInterface=dialog
+        codeBinding.apply {
+            id = verificationId
+            listener = this@LoginActivity
+            dialogInterface = dialog
         }
         return dialog
     }
@@ -83,14 +92,34 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
 
     }
 
-    private fun phoneSignIn(phoneNumber:String="+525555555555"){
+    private fun phoneSignIn(phoneNumber: String = "+555555555") {
+
+        FirebaseAuth.getInstance().firebaseAuthSettings.forceRecaptchaFlowForTesting(true)
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-            .setActivity(this) // Activity (for callback binding)
+            .setActivity(this)
             .setCallbacks(callbacks) // OnVerificationStateChangedCallbacks
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+    fun onResumeFromEmailVerification() {
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                // Get deep link from result (may be null if no link is found)
+                if (pendingDynamicLinkData != null) {
+                    val deepLink = pendingDynamicLinkData.link
+                    //Get the action code from the query parameters
+                    val verificationCode = deepLink?.getQueryParameter("oobCode")
+                    if (verificationCode != null) {
+                        //Complete the email verification flow
+                        Firebase.auth.applyActionCode(verificationCode)
+                    }
+                }
+            }
+            .addOnFailureListener(this) { e -> Log.w(TAG, "getDynamicLink:onFailure", e) }
     }
 
     override fun onResume() {
@@ -155,7 +184,24 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
             }
 
             override fun onCancel() {
-
+                auth.signInWithEmailAndPassword("email", "password")
+                    .addOnCompleteListener() { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success")
+                            val user = auth.currentUser
+                            //updateUI(user)
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Firebase.crashlytics.recordException(Throwable(task.exception))
+                            Toast.makeText(
+                                baseContext,
+                                "Authentication failed.",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                            //updateUI(null)
+                        }
+                    }
             }
 
             override fun onError(error: FacebookException) {
@@ -172,12 +218,11 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
             if (task.isSuccessful) {
                 val user = auth.currentUser
                 jumpToMain(user)
-            }
-            else{
+            } else {
                 AlertDialog.Builder(this)
                     .setMessage(task.exception?.toString())
                     .setCancelable(true)
-                    .setPositiveButton(R.string.ok){dialog, _ ->dialog.dismiss()}
+                    .setPositiveButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
                     .create()
                     .show()
             }
@@ -238,7 +283,6 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
     }
 
 
-
     override fun onEmail(email: String) {
         emailDialog.dismiss()
         if (validateEmail(email)) {
@@ -251,14 +295,14 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
     }
 
     private fun storeEmail(email: String) {
-        val editor=getSharedPreferences(PREFERENCES,Context.MODE_PRIVATE).edit()
-        editor.putString(EMAIL,email)
+        val editor = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE).edit()
+        editor.putString(EMAIL, email)
         editor.apply()
     }
 
-    private fun retrieveEmail():String{
-        val preferences=getSharedPreferences(PREFERENCES,Context.MODE_PRIVATE)
-        val email= preferences.getString(EMAIL,"")?:""
+    private fun retrieveEmail(): String {
+        val preferences = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+        val email = preferences.getString(EMAIL, "") ?: ""
         /*val editor=preferences.edit()
         editor.putString(EMAIL,"")
         editor.apply()*/
@@ -275,7 +319,8 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
             setAndroidPackageName(
                 "com.example.firenews",
                 true, /* installIfNotAvailable */
-                "1" /* minimumVersion */)
+                "1" /* minimumVersion */
+            )
         }
 
         Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
@@ -304,11 +349,17 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
             // This callback is invoked in an invalid request for verification is made,
             // for instance if the the phone number format is not valid.
             Log.w(TAG, "onVerificationFailed", e)
-            
+
             val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
             val simOperatorName = telephonyManager.simOperatorName
-            Firebase.crashlytics.setCustomKey("Carrier",simOperatorName)
+            Firebase.crashlytics.setCustomKey("Carrier", simOperatorName)
             Firebase.crashlytics.recordException(e)
+            Log.e(TAG, e.toString())
+            AlertDialog.Builder(this@LoginActivity)
+                .setTitle("Error")
+                .setMessage(e.message.toString())
+                .create()
+                .show()
             when (e) {
                 is FirebaseAuthInvalidCredentialsException -> {
                     // Invalid request
@@ -377,12 +428,16 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
     companion object {
         const val TAG = "LoginActivity"
         const val GOOGLE_REQUEST = 1000
-        const val EMAIL="EMAIL"
-        const val PREFERENCES="login"
+        const val EMAIL = "EMAIL"
+        const val PREFERENCES = "login"
 
     }
 
-    override fun onCodeInput(verificationId:String,verificationCode: String,dialogInterface:DialogInterface) {
+    override fun onCodeInput(
+        verificationId: String,
+        verificationCode: String,
+        dialogInterface: DialogInterface
+    ) {
         val credential = PhoneAuthProvider.getCredential(verificationId, verificationCode)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
@@ -398,7 +453,8 @@ class LoginActivity : AppCompatActivity(), OnMailDialogInteractionListener, OnCo
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
-                        Toast.makeText(this,R.string.invalid_verification_code,Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, R.string.invalid_verification_code, Toast.LENGTH_LONG)
+                            .show()
                     }
                     // Update UI
                 }

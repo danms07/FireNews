@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "1074764944081-gu0gknu86e2a2d0m8p5g5m9ljnsbekc2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.firenews",
+            "certificate_hash": "5be6f47ab0de724404298fdc7997fab8aa07f299"
+          }
+        },
+        {
+          "client_id": "1074764944081-h5oa7bg8821p9lc9g2tmf1d4qhrahhlv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.firenews",
+            "certificate_hash": "a5d04adf2f03c33d0ec8f4461b51d26067b5cb3d"
+          }
+        },
+        {
           "client_id": "1074764944081-rgrhlehck4n71b9s0d5l0sh2ansjv78c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

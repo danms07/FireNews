@@ -7,14 +7,14 @@ plugins {
 }
 
 android {
-    /*signingConfigs {
+    signingConfigs {
         release {
-            storeFile file('/home/dany/AndroidStudioProjects/FireNews/app/key.jks')
+            storeFile file('key.jks')
             storePassword 'key123'
             keyAlias 'key'
             keyPassword 'key123'
         }
-    }*/
+    }
     namespace 'com.example.firenews'
     compileSdk 33
 
@@ -30,7 +30,7 @@ android {
 
     buildTypes {
         release {
-            //signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -54,7 +54,7 @@ android {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
     //Auth
     implementation 'com.google.firebase:firebase-auth-ktx'
     //RTDB
@@ -65,6 +65,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     //FCM
     implementation 'com.google.firebase:firebase-messaging-ktx'
+    //FDL
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     //Coil to download images
     implementation "io.coil-kt:coil:2.3.0"
