@@ -14,10 +14,9 @@
     <string name="email_instructions" translatable="false">You will receive an email with a link to access Firenews</string>
     <string name="email_hint" translatable="false">username@domain.com</string>
     <string name="ok" translatable="false">Ok</string>
-    <string name="cancel">Cancel</string>
     <string name="empty_email" translatable="false">Please input an email address</string>
-    <string name="invalid_email" translatable="false">Please input a valid email address</string>
-    <string name="sending_email" translatable="false">Sending email</string>
+    <string name="invalid_email">Please input a valid email address</string>
+    <string name="sending_email">Sending email</string>
     <string name="img_content_description">Article picture</string>
     <string name="force_crash">Force crash</string>
     <string name="license_option">See licenses</string>
@@ -25,4 +24,28 @@
     <string name="verification_code_input">Verification code</string>
     <string name="invalid_verification_code">The code is invalid, please rectify it and try again</string>
     <string name="phone_login">Access with phone number</string>
+    <string name="sign_in">Sign In</string>
+    <string name="email">Email</string>
+    <string name="password">password</string>
+    <string name="log_in">Log In</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="or_access_with">Or access with:</string>
+    <string name="phone">Phone</string>
+    <string name="doesn_t_have_an_account">Doesn\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="anonymous">anonymous authentication</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="create_account">Create account</string>
+    <string name="phone_code_instructions">Input the verification code sent to your phone</string>
+    <string name="phone_number_instructions">Input your phone number to send you a verification code by SMS</string>
+    <string name="verification_code_hint">Verification code</string>
+    <string name="phone_number_hint">Phone number</string>
+    <string name="cancel">Cancel</string>
+    <string name="new_account_instructions">Register your email and setup your password</string>
+    <string name="forgot_password_instructions">Enter your email below, if it is linked to an account, you will receive an email with instructions to reset your password</string>
+    <string name="google_account">Sign In with Google</string>
+    <string name="fb_account">Sign In with Facebook</string>
+    <string name="in_account">Sign In with Linked In</string>
+    <string name="welcome_to_firenews">Welcome to FireNews</string>
+    <string name="error" translatable="false">Error</string>
 </resources>

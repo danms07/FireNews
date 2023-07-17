@@ -16,12 +16,12 @@ android {
         }
     }
     namespace 'com.example.firenews'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.firenews"
-        minSdk 24
-        targetSdk 33
+        minSdk 26
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -33,9 +33,12 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //buildConfigField("Boolean", "IS_DEBUG", "false")
         }
         debug{
             debuggable true
+            signingConfig signingConfigs.release
+            //buildConfigField("Boolean", "IS_DEBUG", "true")
         }
     }
     compileOptions {
@@ -54,7 +57,7 @@ android {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
     //Auth
     implementation 'com.google.firebase:firebase-auth-ktx'
     //RTDB
@@ -77,18 +80,27 @@ dependencies {
     //Google sign in button
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     //Facebook sign in button
-    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
+    implementation 'com.facebook.android:facebook-android-sdk:16.0.0'
     //implementation 'com.facebook.android:facebook-login:latest.release'
+
+    //Adding App Check
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity'
+    //Debug provider
+    implementation 'com.google.firebase:firebase-appcheck-debug:17.0.1'
 
     //Gradle license Plugin
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
 
 
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'com.google.firebase:firebase-appcheck-ktx:17.0.1'
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity:17.0.1'
+    implementation("com.google.firebase:firebase-functions-ktx")
+    implementation 'androidx.core:core-ktx:+'
 
     testImplementation 'junit:junit:4.13.2'
     //noinspection GradleDependency

@@ -18,8 +18,8 @@ admin.initializeApp();
 });*/
 
 exports.fetchBySource=functions.https.onRequest(async(req,res)=>{
-    const sources=["cnn-es","el-mundo","infobae","la-nacion","marca"];
-    //const sources=["cnn-es","el-mundo"];
+    //const sources=["cnn-es","el-mundo","infobae","la-nacion","marca"];
+    const sources=["cnn-es","el-mundo"];
     sources.forEach(source=>{
         const query='sources='+source
         getNews(query)
@@ -58,3 +58,29 @@ const writeNewsInDB=(source, articles)=>{
 //   functions.logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
+
+exports.fetchAppCheckToken = functions.https.onCall((authenticityData, context) => {
+    admin.appCheck().createToken(appId)
+    .then(function (appCheckToken) {
+      // Token expires in an hour.
+      const expiresAt = Math.floor(Date.now() / 1000) + 60 * 60;
+
+      // Return appCheckToken and expiresAt to the client.
+      return {
+        token: appCheckToken,
+        expiresAt: expiresAt
+      }
+    })
+   .catch(function (err) {
+     console.error('Unable to create App Check token.');
+     console.error(err);
+   });
+});
+
+exports.fetchDebugAppCheckToken = functions.https.onCall((authenticityData, context) => {
+  return{ 
+    token:"D763789E-CB60-4AB0-BE35-4001BD33EF87"
+  }
+});
+
+

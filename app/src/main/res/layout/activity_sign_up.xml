@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data
+        class="SignUpBinding"
+        />
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SignUpActivity"
+        android:background="@drawable/rectangle"
+        android:padding="30dp">
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="50dp">
+
+            <LinearLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle"
+                    android:src="@drawable/baseline_person_add_64"
+                    app:srcCompat="@drawable/baseline_person_add_64"
+                    android:padding="10dp"
+                    android:layout_marginTop="10dp"
+                    android:importantForAccessibility="no" />
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/new_account_instructions"
+                    android:textSize="18sp"
+                    android:textAlignment="center"
+                    />
+                <EditText
+                    android:id="@+id/et_email_input"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="@string/email"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textEmailAddress"
+                    android:maxWidth="480dp"
+                    app:layout_constraintWidth_max="480dp" />
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:importantForAutofill="no"
+                    android:maxWidth="480dp"
+                    app:layout_constraintWidth_max="480dp"/>
+                <EditText
+                    android:id="@+id/et_confirm_password"
+                    android:layout_marginTop="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:hint="@string/confirm_password"
+                    android:inputType="textPassword"
+                    android:importantForAutofill="no"
+                    android:maxWidth="480dp"
+                    app:layout_constraintWidth_max="480dp" />
+                <Button
+                    android:id="@+id/add_account_button"
+                    android:layout_marginTop="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_account"
+                    tools:ignore="VisualLintButtonSize"
+                    />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+</layout>

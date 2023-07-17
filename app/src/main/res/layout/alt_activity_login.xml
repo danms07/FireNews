@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".LoginActivity"
+    >
+    <data class="ActivityLoginBinding"/>
+
+    <!--
+    OIDC LinkedIn
+
+        android:background="@drawable/rectangle"
+        android:theme="@style/OrangeBack"
+    -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@null"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/top_icon_imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/round_outline"
+                android:clipToOutline="true"
+                android:contentDescription="@string/welcome_to_firenews"
+                android:src="@mipmap/app_icon"
+                android:textSize="34sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@mipmap/app_icon" />
+            <!--Card for the email login-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/login_panel_cardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="40dp"
+                android:elevation="15dp"
+                android:maxWidth="487dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/top_icon_imageView"
+                app:layout_constraintWidth_max="487dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp">
+
+                    <TextView
+                        android:id="@+id/signIn_label_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sign_in"
+                        android:textSize="28sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.498"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!--<ImageView
+                        android:id="@+id/account_icon_imageView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/baseline_account_circle_120"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/signIn_label_textView"
+                        app:srcCompat="@drawable/baseline_account_circle_120" />-->
+
+                    <EditText
+                        android:id="@+id/email_input_edittext"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="25dp"
+                        android:autofillHints="emailAddress"
+                        android:ems="10"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:maxWidth="487dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/signIn_label_textView"
+                        app:layout_constraintWidth_max="487dp" />
+
+
+                    <EditText
+                        android:id="@+id/password_input_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="25dp"
+                        android:autofillHints="password"
+                        android:ems="10"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:maxWidth="487dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/email_input_edittext"
+                        app:layout_constraintWidth_max="487dp" />
+
+                    <Button
+                        android:id="@+id/email_login_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:maxWidth="487dp"
+                        android:text="@string/log_in"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/password_input_editText"
+                        app:layout_constraintWidth_max="487dp" />
+
+                    <TextView
+                        android:id="@+id/forgotPassword_option_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:text="@string/forgot_your_password"
+                        android:textColor="@color/google_blue_700"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/email_login_button" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <TextView
+                android:id="@+id/accessOptions_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:text="@string/or_access_with"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_panel_cardView" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:contentDescription="@string/com_facebook_device_auth_instructions"
+                android:focusable="true"
+                app:layout_constraintEnd_toStartOf="@+id/googleLoginButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/accessOptions_label_textView"
+                app:srcCompat="@drawable/fb_path"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/googleLoginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:clickable="true"
+                android:contentDescription="@string/google_account"
+                android:focusable="true"
+                app:layout_constraintEnd_toStartOf="@id/linkedInLogin"
+                app:layout_constraintStart_toEndOf="@+id/fb_login_button"
+                app:layout_constraintTop_toBottomOf="@id/accessOptions_label_textView"
+                app:srcCompat="@drawable/google__g__logo" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/phoneLoginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:clickable="true"
+                android:contentDescription="@string/phone_login"
+                android:focusable="true"
+                app:layout_constraintEnd_toStartOf="@+id/anonLoginButton"
+                app:layout_constraintStart_toEndOf="@id/linkedInLogin"
+                app:layout_constraintTop_toBottomOf="@id/accessOptions_label_textView"
+                app:srcCompat="@drawable/baseline_local_phone_64" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/anonLoginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:clickable="true"
+                android:contentDescription="@string/anon_login"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/phoneLoginButton"
+                app:layout_constraintTop_toBottomOf="@id/accessOptions_label_textView"
+                app:srcCompat="@drawable/privacy_private_icon" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/linkedInLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:clickable="true"
+                android:contentDescription="@string/in_account"
+                app:layout_constraintEnd_toStartOf="@id/phoneLoginButton"
+                app:layout_constraintStart_toEndOf="@id/googleLoginButton"
+                app:layout_constraintTop_toBottomOf="@+id/accessOptions_label_textView"
+                app:srcCompat="@drawable/linkedinvector" />
+
+
+            <TextView
+                android:id="@+id/noAccount_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/doesn_t_have_an_account"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/createAccount_option_textView"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/anonLoginButton"
+                app:layout_constraintVertical_bias="0.25" />
+
+            <TextView
+                android:id="@+id/createAccount_option_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="25dp"
+                android:text="@string/sign_up"
+                android:textColor="@color/google_blue_600"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/noAccount_label_textView"
+                app:layout_constraintTop_toBottomOf="@id/anonLoginButton" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>
