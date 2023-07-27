@@ -26,6 +26,8 @@ class FireNewsApplication : Application() {
         AppEventsLogger.activateApp(this)
         Firebase.initialize(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        val functions = Firebase.functions
+        functions.useEmulator("10.0.2.2", 5001)
 
         if (BuildConfig.DEBUG) {
             val persistenceKey = FirebaseApp.getInstance().persistenceKey

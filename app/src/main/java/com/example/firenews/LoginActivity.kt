@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.firenews.authentication.NativeGoogleSignInContract
+import com.example.firenews.authentication.linkedIn.AuthWebViewContract
+import com.example.firenews.authentication.linkedIn.LinkedInLoginHelper
 import com.example.firenews.databinding.ActivityLoginBinding
 import com.example.firenews.databinding.VerificationCodeInputBinding
 import com.example.firenews.input.DialogContent
@@ -27,14 +29,12 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
@@ -45,24 +45,29 @@ import java.util.concurrent.TimeUnit
 
 
 class LoginActivity : AppCompatActivity(),
-    OnCodeDialogInteractionListener {
+    OnCodeDialogInteractionListener,
+    LinkedInLoginHelper.LinkedInLoginCallback {
     private lateinit var loginBinding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
+    private var linkedInLoginHelper: LinkedInLoginHelper? = null
     private var facebookCallbackManager = CallbackManager.Factory.create()
+    private val linkedInLoginLauncher = registerForActivityResult(AuthWebViewContract()) {
+        onLinkedInAuthCode(it)
+    }
     private val fbLauncher = registerForActivityResult(
         LoginManager.getInstance().createLogInActivityResultContract(facebookCallbackManager)
     ) {
 
     }
 
-    private val nativeGoogleSignInLauncher= registerForActivityResult(NativeGoogleSignInContract()){
-        onNativeGoogleSignInResult(it)
-    }
+    private val nativeGoogleSignInLauncher =
+        registerForActivityResult(NativeGoogleSignInContract()) {
+            onNativeGoogleSignInResult(it)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
-
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(loginBinding.root)
         loginBinding.googleLoginButton.setOnClickListener { googleSignIn() }
@@ -76,6 +81,7 @@ class LoginActivity : AppCompatActivity(),
         }
         loginBinding.forgotPasswordOptionTextView.setOnClickListener { mailPickUp() }
         loginBinding.createAccountOptionTextView.setOnClickListener { goToSignUp() }
+        loginBinding.linkedInLogin.setOnClickListener { startLinkedInFlow() }
     }
 
     private fun mailPickUp() {
@@ -94,7 +100,13 @@ class LoginActivity : AppCompatActivity(),
     }
 
     private fun sendPasswordResetEmail(email: String) {
-
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                showToast(getString(R.string.sending_email))
+            }
+            .addOnFailureListener {
+                Log.e(TAG, it.stackTraceToString())
+            }
     }
 
     private fun emailPassLogin(email: String, password: String) {
@@ -154,8 +166,8 @@ class LoginActivity : AppCompatActivity(),
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInAnonymously:failure", task.exception)
-                    val exception=task.exception
-                    if(exception!=null){
+                    val exception = task.exception
+                    if (exception != null) {
                         displayErrorAlert(exception.message.toString())
                     }
 
@@ -163,7 +175,7 @@ class LoginActivity : AppCompatActivity(),
             }
     }
 
-    private fun loginWithFacebook(){
+    private fun loginWithFacebook() {
         val accessToken = AccessToken.getCurrentAccessToken()
         val isLoggedIn = accessToken != null && !accessToken.isExpired
         if (isLoggedIn && accessToken != null) {
@@ -192,7 +204,7 @@ class LoginActivity : AppCompatActivity(),
         fbLauncher.launch(listOf(EMAIL, PROFILE))
     }
 
-    fun createFacebookCredential(accessToken: AccessToken){
+    fun createFacebookCredential(accessToken: AccessToken) {
         val credential = FacebookAuthProvider.getCredential(accessToken.token)
         signInWithAuthCredential(credential)
     }
@@ -208,7 +220,7 @@ class LoginActivity : AppCompatActivity(),
 
 
     private fun onNativeGoogleSignInResult(googleSignInAccountTask: Task<GoogleSignInAccount>?) {
-        if(googleSignInAccountTask!=null){
+        if (googleSignInAccountTask != null) {
             try {
                 val account = googleSignInAccountTask.result
                 val token = account.idToken
@@ -318,7 +330,7 @@ class LoginActivity : AppCompatActivity(),
                 } else {
                     // Sign in failed, display a message and update the UI
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    val exception=task.exception
+                    val exception = task.exception
                     if (exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
                         displayErrorAlert(exception.message.toString())
@@ -332,7 +344,7 @@ class LoginActivity : AppCompatActivity(),
         AlertDialog.Builder(this)
             .setTitle(R.string.error)
             .setMessage(message)
-            .setNeutralButton(R.string.ok){dialogInterface,_->
+            .setNeutralButton(R.string.ok) { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
             .create()
@@ -351,7 +363,7 @@ class LoginActivity : AppCompatActivity(),
     companion object {
         const val TAG = "LoginActivity"
         const val EMAIL = "email"
-        const val PROFILE= "public_profile"
+        const val PROFILE = "public_profile"
 
     }
 
@@ -368,5 +380,47 @@ class LoginActivity : AppCompatActivity(),
 
     }
 
+
+    private fun startLinkedInFlow() {
+        linkedInLoginHelper = LinkedInLoginHelper().apply {
+            callback = this@LoginActivity
+            //createAuthRequest()
+        }
+
+        linkedInLoginHelper?.getWebAuthConfig().let {
+            linkedInLoginLauncher.launch(it)
+        }
+
+    }
+
+    private fun onLinkedInAuthCode(authCode: String) {
+        Log.e(TAG, "Auth code received: $authCode")
+        //linkedInLoginHelper?.exchangeAccessToken(authCode)
+        linkedInLoginHelper?.getIdToken(authCode)
+    }
+
+    override fun onLinkedInAuthException(exception: Exception) {
+        Log.e(TAG, exception.stackTraceToString())
+    }
+
+    override fun onIdToken(idToken: String) {
+        auth.signInWithCustomToken(idToken)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCustomToken:success")
+                    val user = auth.currentUser
+                    jumpToMain(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCustomToken:failure", task.exception)
+                    Toast.makeText(
+                        baseContext,
+                        "Authentication failed.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+    }
 
 }
