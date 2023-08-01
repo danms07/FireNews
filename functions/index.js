@@ -46,8 +46,8 @@ const writeNewsInDB = (source, articles) => {
 const axios = require('axios').default;
 
 const MY_REDIRECT_URI = "https://firenews-92f91.web.app/oauth2redirect";
-const MY_CLIENT_SECRET = "gNOfMZIrh9zuLWrF";
-const CLIENT_ID = "78gvimlnm6ejmt";
+const MY_CLIENT_SECRET = "gdfgadfsgv";
+const CLIENT_ID = "swdfgst";
 const EXCHANGE_URL = "https://www.linkedin.com/oauth/v2/accessToken";
 
 exports.getIdToken = onCall(async (request) => {
