@@ -9,11 +9,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import com.example.firenews.authentication.LoginActivity
 import com.example.firenews.databinding.MainBinding
 import com.example.firenews.viewmodel.MainViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.firebase.auth.ActionCodeSettings
-import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase

@@ -24,7 +24,9 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
+        manifestPlaceholders = [
+                'appAuthRedirectScheme': 'com.googleusercontent.apps.PREFIX'
+        ]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -102,6 +104,10 @@ dependencies {
     implementation("com.google.firebase:firebase-functions-ktx")
     implementation("com.google.firebase:firebase-functions-ktx")
     implementation 'androidx.core:core-ktx:1.10.1'
+
+    //Google sign in
+    implementation 'net.openid:appauth:0.11.1'
+    implementation 'com.squareup.okio:okio:1.17.5'
 
     testImplementation 'junit:junit:4.13.2'
     //noinspection GradleDependency

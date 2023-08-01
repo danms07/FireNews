@@ -1,21 +1,25 @@
-package com.example.firenews
+package com.example.firenews.authentication
 
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.firenews.authentication.NativeGoogleSignInContract
+import com.example.firenews.MainActivity
+import com.example.firenews.R
+import com.example.firenews.authentication.google.GoogleOauthContract
+import com.example.firenews.authentication.google.NativeGoogleSignInContract
 import com.example.firenews.authentication.linkedIn.AuthWebViewContract
 import com.example.firenews.authentication.linkedIn.LinkedInLoginHelper
 import com.example.firenews.databinding.ActivityLoginBinding
 import com.example.firenews.databinding.VerificationCodeInputBinding
-import com.example.firenews.input.DialogContent
-import com.example.firenews.input.InputDialogBuilder
+import com.example.firenews.authentication.input.DialogContent
+import com.example.firenews.authentication.input.InputDialogBuilder
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -24,6 +28,8 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
@@ -35,18 +41,35 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.ResponseTypeValues
 import java.util.concurrent.TimeUnit
 
 
 class LoginActivity : AppCompatActivity(),
     OnCodeDialogInteractionListener,
     LinkedInLoginHelper.LinkedInLoginCallback {
+
+    companion object {
+        const val TAG = "LoginActivity"
+        const val EMAIL = "email"
+        const val PROFILE = "public_profile"
+        const val OIDC_LINKEDIN_ID = "oidc.linkedin"
+
+    }
+
     private lateinit var loginBinding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private var linkedInLoginHelper: LinkedInLoginHelper? = null
@@ -65,12 +88,22 @@ class LoginActivity : AppCompatActivity(),
             onNativeGoogleSignInResult(it)
         }
 
+    private val googleOauthLauncher = registerForActivityResult(GoogleOauthContract()) {
+        onGoogleOauthResult(it)
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
         loginBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(loginBinding.root)
-        loginBinding.googleLoginButton.setOnClickListener { googleSignIn() }
+        loginBinding.googleLoginButton.setOnClickListener {
+            val availability=GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
+            if(availability==ConnectionResult.SUCCESS){
+                googleSignIn()
+            }else googleOauthLogin()
+        }
         loginBinding.fbLoginButton.setOnClickListener { loginWithFacebook() }
         loginBinding.anonLoginButton.setOnClickListener { anonSignIn() }
         loginBinding.phoneLoginButton.setOnClickListener { phonePickUp() }
@@ -224,8 +257,7 @@ class LoginActivity : AppCompatActivity(),
             try {
                 val account = googleSignInAccountTask.result
                 val token = account.idToken
-                val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
-                signInWithAuthCredential(firebaseCredential)
+                createGoogleCredential(token)
             } catch (e: ApiException) {
                 // The ApiException status code indicates the detailed failure reason.
                 // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -360,12 +392,6 @@ class LoginActivity : AppCompatActivity(),
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    companion object {
-        const val TAG = "LoginActivity"
-        const val EMAIL = "email"
-        const val PROFILE = "public_profile"
-
-    }
 
     override fun onCodeInput(
         verificationId: String,
@@ -421,6 +447,84 @@ class LoginActivity : AppCompatActivity(),
                     ).show()
                 }
             }
+    }
+
+    private fun tryLinkedInAsOIDC() {
+        val providerBuilder = OAuthProvider.newBuilder(OIDC_LINKEDIN_ID)
+        providerBuilder.scopes = listOf("openid", "profile", "email")
+        auth.startActivityForSignInWithProvider(this, providerBuilder.build())
+            .addOnSuccessListener {
+                // User is signed in.
+                // IdP data available in
+                // authResult.getAdditionalUserInfo().getProfile().
+                // The OAuth access token can also be retrieved:
+                // ((OAuthCredential)authResult.getCredential()).getAccessToken().
+                // The OAuth secret can be retrieved by calling:
+                // ((OAuthCredential)authResult.getCredential()).getSecret().
+                val user = it.user
+                jumpToMain(user)
+            }
+            .addOnFailureListener {
+                Log.e(TAG, it.stackTraceToString())
+            }
+
+    }
+
+    private fun googleOauthLogin() {
+        val serviceConfig = AuthorizationServiceConfiguration(
+            Uri.parse("https://accounts.google.com/o/oauth2/auth"), // authorization endpoint
+            Uri.parse("https://oauth2.googleapis.com/token")
+        ) // token endpoint
+        val authRequestBuilder = AuthorizationRequest.Builder(
+            serviceConfig,  // the authorization service configuration
+            "OAUTH_CLIENT",  // the client ID, typically pre-registered and static
+            ResponseTypeValues.CODE,  //
+            Uri.parse("com.example.firenews:/oauth2redirect")
+        ) // the redirect URI to which the auth response is sent
+        authRequestBuilder.setScope("openid email profile")
+        val authRequest = authRequestBuilder.build()
+        googleOauthLauncher.launch(authRequest)
+    }
+
+    private fun onGoogleOauthResult(data: Intent?) {
+        if (data != null) {
+            val response = AuthorizationResponse.fromIntent(data)
+            val ex = AuthorizationException.fromIntent(data)
+            val authState = AuthState(response, ex)
+            if (response != null) {
+                performGoogleTokenRequest(authState, response)
+            } else if (ex != null) {
+                Log.e(TAG, ex.stackTraceToString())
+            }
+        }
+    }
+
+    private fun performGoogleTokenRequest(authState: AuthState, response: AuthorizationResponse) {
+        val service = AuthorizationService(this)
+        service.performTokenRequest(
+            response.createTokenExchangeRequest()
+        ) { tokenResponse, exception ->
+            if (exception != null) {
+                Log.e(TAG, "Token Exchange failed", exception)
+            } else if (tokenResponse != null) {
+                authState.update(tokenResponse, null)
+                val idToken=tokenResponse.idToken
+                Log.e(
+                    TAG,
+                    "Token Response [ Access Token: ${tokenResponse.accessToken}, ID Token: ${tokenResponse.idToken}"
+                )
+                if(idToken!=null){
+                    createGoogleCredential(idToken)
+                }
+
+            }
+
+        }
+    }
+
+    private fun createGoogleCredential(idToken: String?) {
+        val credential=GoogleAuthProvider.getCredential(idToken,null)
+        signInWithAuthCredential(credential)
     }
 
 }

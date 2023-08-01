@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="33">
         <activity
-            android:name=".SignUpActivity"
+            android:name=".authentication.SignUpActivity"
             android:exported="false" />
         <activity
             android:name=".WebViewActivity"
@@ -30,7 +30,7 @@
             android:value="@string/facebook_client_token" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".authentication.LoginActivity"
             android:exported="true"
             android:launchMode="singleTop"
 
@@ -85,6 +85,18 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="com.example.firenews"/>
             </intent-filter>
         </activity>
     </application>

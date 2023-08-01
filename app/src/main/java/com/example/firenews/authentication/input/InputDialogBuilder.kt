@@ -1,4 +1,4 @@
-package com.example.firenews.input
+package com.example.firenews.authentication.input
 
 import android.app.AlertDialog
 import android.content.Context
@@ -17,9 +17,9 @@ class InputDialogBuilder(context: Context, private val dialogContent: DialogCont
         dataInputEditText.setAutofillHints(dialogContent.autoFillHints)
         dataInputEditText.setHint(dialogContent.inputHint)
     }
-    private var onDataInputListener:OnDataInputListener?=null
+    private var onDataInputListener: OnDataInputListener?=null
 
-    private var onInputCancelledListener:OnInputCancelledListener?=null
+    private var onInputCancelledListener: OnInputCancelledListener?=null
 
 
     /*fun setIcon(resourceId: Int=R.mipmap.app_icon){
@@ -67,8 +67,8 @@ class InputDialogBuilder(context: Context, private val dialogContent: DialogCont
         return dialog
     }
 
-    fun setOnDataInputListener(listener:(String)->Unit):InputDialogBuilder{
-        onDataInputListener=object:OnDataInputListener{
+    fun setOnDataInputListener(listener:(String)->Unit): InputDialogBuilder {
+        onDataInputListener=object: OnDataInputListener {
             override fun onDataInserted(input: String) {
                 listener(input)
 
@@ -77,8 +77,8 @@ class InputDialogBuilder(context: Context, private val dialogContent: DialogCont
         return this
     }
 
-    fun setOnInputCancelledListener(listener:()->Unit):InputDialogBuilder{
-        onInputCancelledListener=object:OnInputCancelledListener{
+    fun setOnInputCancelledListener(listener:()->Unit): InputDialogBuilder {
+        onInputCancelledListener=object: OnInputCancelledListener {
             override fun onInputCancelled() {
                 listener()
             }

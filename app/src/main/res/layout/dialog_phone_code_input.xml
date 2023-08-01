@@ -7,7 +7,7 @@
     <data class="VerificationCodeInputBinding">
         <variable
             name="listener"
-            type="com.example.firenews.OnCodeDialogInteractionListener" />
+            type="com.example.firenews.authentication.OnCodeDialogInteractionListener" />
         <variable
             name="id"
             type="String" />

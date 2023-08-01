@@ -1,4 +1,4 @@
-package com.example.firenews
+package com.example.firenews.authentication
 
 import android.content.DialogInterface
 

@@ -1,4 +1,4 @@
-package com.example.firenews.authentication
+package com.example.firenews.authentication.google
 
 import android.content.Context
 import android.content.Intent

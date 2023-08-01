@@ -1,16 +1,15 @@
-package com.example.firenews
+package com.example.firenews.authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.firenews.MainActivity
+import com.example.firenews.R
 import com.example.firenews.databinding.SignUpBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ActionCodeSettings
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -74,7 +73,7 @@ class SignUpActivity : AppCompatActivity() {
                             .setTitle("createUserWithEmail:failure")
                             .setMessage(exception.message)
                             .setCancelable(false)
-                            .setPositiveButton(R.string.ok){dialogInterface,_->
+                            .setPositiveButton(R.string.ok){ dialogInterface, _->
                                 dialogInterface.dismiss()
                             }
                             .create().show()
